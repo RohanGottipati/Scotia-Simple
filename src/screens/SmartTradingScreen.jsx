@@ -637,7 +637,7 @@ export default function SmartTradingScreen() {
         <button className="p-2 bg-transparent border-none cursor-pointer"><Settings size={18} className="text-scotia-grey-600" /></button>
       </div>
 
-      <div className="flex-1 overflow-y-auto pb-20">
+      <div className="flex-1 overflow-y-auto">
         {activeTab === 'portfolio' && !selectedStock && <PortfolioDashboard onSelectStock={setSelectedStock} onBuySell={(type, symbol) => setBuySell({ type, symbol })} />}
         {activeTab === 'search'    && !selectedStock && <SearchStocks onSelectStock={setSelectedStock} />}
         {activeTab === 'activity'  && !selectedStock && <ActivityTab />}
@@ -645,7 +645,7 @@ export default function SmartTradingScreen() {
         {selectedStock && <StockDetail symbol={selectedStock} onBack={() => setSelectedStock(null)} onBuySell={type => setBuySell({ type, symbol: selectedStock })} />}
       </div>
 
-      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] bg-white border-t border-scotia-grey-200 px-4 py-2 flex items-center justify-around z-20">
+      <div className="flex-shrink-0 bg-white border-t border-scotia-grey-200 px-4 py-2 flex items-center justify-around">
         {navItems.map(({ id, icon: Icon, label }) => (
           <button key={id} onClick={() => { setActiveTab(id); setSelectedStock(null); }}
             className={`flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-lg border-none bg-transparent cursor-pointer transition-colors ${activeTab === id ? 'text-scotia-red' : 'text-scotia-grey-500'}`}>
