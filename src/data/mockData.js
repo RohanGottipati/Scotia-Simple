@@ -1,17 +1,25 @@
 export const USER = {
-  name: 'Sarah',
-  firstName: 'Sarah',
-  initials: 'SK',
+  name: 'John',
+  firstName: 'John',
+  initials: 'J',
+  hasTfsa: false,
 };
 
-export const BALANCES = {
-  chequing: 1240.00,
-  tfsa: 3000.00,
-  netWorth: 4240.00,
-  tfsaRoomRemaining: 6200.00,
-  tfsaRoomYear: 2026,
-};
+export const BANKING_ACCOUNTS = [
+  { name: 'Preferred Package', last4: '7286', balance: 1431.61 },
+  { name: 'Momentum PLUS Savings', last4: '4518', balance: 8375.73 },
+  { name: 'US Dollar Account', last4: '3192', balance: 425.00 },
+  { name: 'Money Master Savings', last4: '6604', balance: 2575.10 },
+];
 
+export const CREDIT_CARDS = [
+  { name: 'Scotia Momentum No-Fee VISA', last4: '5012', balance: 717.45 },
+];
+
+export const TOTAL_HAVE = 12807.44;
+export const TOTAL_OWE = 717.45;
+
+// Money Moments feature data (kept from original)
 export const ACTIVE_MOMENT = {
   id: 'moment-001',
   type: 'dining_surplus',
@@ -62,6 +70,14 @@ export const MOMENTS_HISTORY = [
   },
 ];
 
+export const BALANCES = {
+  chequing: 1431.61,
+  tfsa: 0,
+  netWorth: 12807.44,
+  tfsaRoomRemaining: 6200.00,
+  tfsaRoomYear: 2026,
+};
+
 export const PORTFOLIO_CHART_DATA = [
   { month: 'Nov', value: 2800 },
   { month: 'Dec', value: 2850 },
@@ -73,29 +89,30 @@ export const PORTFOLIO_CHART_DATA = [
 ];
 
 export const PORTFOLIO_HOLDINGS = [
-  {
-    name: 'Scotia Selected Balanced Portfolio',
-    type: 'Managed Portfolio',
-    value: 3000.00,
-    allocation: '100%',
-    change: '+2.7%',
-    changePositive: true,
-  },
+  { name: 'Scotia Selected Balanced Portfolio', type: 'Managed Portfolio', value: 3000.00, allocation: '100%', change: '+2.7%', changePositive: true },
 ];
 
 export const LIVING_RISK_PROFILE = {
   currentRisk: 'Moderate',
   previousRisk: 'Conservative',
   triggered: true,
-  triggerReason: 'Your income increased and your spending has stabilized over the past 3 months.',
+  triggerReason: 'Your income increased and your spending has stabilized.',
   triggerDate: 'May 20, 2026',
   signals: [
     { label: 'Income trend', value: '+12% vs. 90-day avg', positive: true },
     { label: 'Spending stability', value: 'High — low variance', positive: true },
     { label: 'Cash buffer', value: '3.2x monthly expenses', positive: true },
   ],
-  recommendation: 'Based on how you\'ve been living with money lately, your portfolio may be ready to take on slightly more growth. Want to update your risk profile?',
+  recommendation: 'Your portfolio may be ready to take on slightly more growth.',
   ctaLabel: 'Review my profile',
 };
 
 export const TOTAL_FOUND_THIS_YEAR = 160.00;
+
+export const INITIAL_TRADING_HOLDINGS = [
+  { symbol: 'AAPL', shares: 25, avgCost: 145.30 },
+  { symbol: 'MSFT', shares: 15, avgCost: 310.50 },
+  { symbol: 'GOOGL', shares: 30, avgCost: 125.80 },
+  { symbol: 'TSLA', shares: 20, avgCost: 210.40 },
+  { symbol: 'NVDA', shares: 10, avgCost: 420.15 },
+];

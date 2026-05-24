@@ -1,53 +1,38 @@
-import { Home, TrendingUp, Zap, User } from 'lucide-react';
+import { Home, ArrowLeftRight, TrendingUp, Circle, Menu } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useApp } from '../../context/AppContext';
-import { LIVING_RISK_PROFILE } from '../../data/mockData';
 
-const tabs = [
-  { icon: Home, label: 'Home', route: '/' },
-  { icon: TrendingUp, label: 'Invest', route: '/portfolio' },
-  { icon: Zap, label: 'Moments', route: '/history' },
-  { icon: User, label: 'Profile', route: '/risk-profile' },
+const navItems = [
+  { id: 'home', icon: Home, label: 'Home', route: '/' },
+  { id: 'move', icon: ArrowLeftRight, label: 'Move Money', route: '/' },
+  { id: 'advice', icon: TrendingUp, label: 'Advice+', route: '/advice' },
+  { id: 'scene', icon: Circle, label: 'Scene+', route: '/history' },
+  { id: 'more', icon: Menu, label: 'More', route: '/risk-profile' },
 ];
 
 export default function BottomNav() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { momentConfirmed } = useApp();
 
   return (
-    <div className="h-[64px] bg-white border-t border-scotia-grey-200 flex items-center justify-around z-40">
-      {tabs.map((tab) => {
-        const isActive = location.pathname === tab.route;
-        const Icon = tab.icon;
-        const showRedDot = tab.label === 'Moments' && !momentConfirmed;
-        const showOrangeDot = tab.label === 'Profile' && LIVING_RISK_PROFILE.triggered;
-
-        return (
-          <button
-            key={tab.label}
-            onClick={() => navigate(tab.route)}
-            className="flex flex-col items-center gap-0.5 relative cursor-pointer bg-transparent border-none"
-          >
-            <div className="relative">
-              <Icon
-                size={22}
-                className={isActive ? 'text-scotia-red' : 'text-scotia-grey-400'}
-                fill={isActive ? 'currentColor' : 'none'}
-              />
-              {showRedDot && (
-                <div className="absolute -top-0.5 -right-1 w-2 h-2 bg-scotia-red rounded-full" />
-              )}
-              {showOrangeDot && (
-                <div className="absolute -top-0.5 -right-1 w-2 h-2 bg-scotia-amber rounded-full" />
-              )}
-            </div>
-            <span className={`text-[10px] font-medium ${isActive ? 'text-scotia-red' : 'text-scotia-grey-400'}`}>
-              {tab.label}
-            </span>
-          </button>
-        );
-      })}
-    </div>
+    <nav className="bg-white border-t border-scotia-grey-200 shadow-[0_-2px_10px_rgba(0,0,0,0.05)] py-1.5 safe-area-bottom">
+      <div className="flex items-center justify-around">
+        {navItems.map((item) => {
+          const isActive = location.pathname === item.route;
+          const Icon = item.icon;
+          return (
+            <button
+              key={item.id}
+              onClick={() => navigate(item.route)}
+              className={`flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-lg transition-colors cursor-pointer border-none bg-transparent ${
+                isActive ? 'bg-scotia-grey-100 text-scotia-red' : 'text-scotia-grey-500 hover:text-scotia-grey-900'
+              }`}
+            >
+              <Icon size={22} />
+              <span className="text-[11px] font-medium">{item.label}</span>
+            </button>
+          );
+        })}
+      </div>
+    </nav>
   );
 }

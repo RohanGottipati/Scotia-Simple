@@ -1,18 +1,23 @@
-import { Bell } from 'lucide-react';
+import { Search } from 'lucide-react';
 import { USER } from '../../data/mockData';
 
 export default function StatusBar() {
+  const now = new Date();
+  const hour = now.getHours();
+  const greeting = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
+
   return (
-    <div className="h-[44px] bg-white border-b border-scotia-grey-200 flex items-center justify-between px-4 z-40">
-      <span className="display-number text-scotia-red text-lg font-bold tracking-tight">
-        Scotiabank
-      </span>
-      <div className="flex items-center gap-3">
-        <Bell size={20} className="text-scotia-grey-700" />
-        <div className="w-8 h-8 rounded-full bg-scotia-red flex items-center justify-center">
-          <span className="text-white text-xs font-semibold">{USER.initials}</span>
-        </div>
+    <header className="bg-scotia-red text-white px-5 pt-2 pb-2">
+      <div className="flex items-center justify-between mb-2">
+        <img src="/icon.webp" alt="Scotiabank" className="h-8 w-auto" />
+        <button className="flex items-center gap-1.5 bg-white/20 hover:bg-white/25 transition-colors rounded-full px-3 py-1.5 cursor-pointer border-none">
+          <Search size={13} />
+          <span className="text-[12px] font-medium">Search &amp; chat</span>
+        </button>
       </div>
-    </div>
+      <h1 className="text-[22px] font-extrabold leading-tight">
+        {greeting}, {USER.firstName}
+      </h1>
+    </header>
   );
 }

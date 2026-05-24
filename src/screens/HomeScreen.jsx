@@ -1,100 +1,93 @@
+import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { CreditCard, ArrowUpRight, BarChart3 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import { useApp } from '../context/AppContext';
-import { USER } from '../data/mockData';
-import NetWorthBanner from '../components/cards/NetWorthBanner';
-import BalanceCard from '../components/cards/BalanceCard';
+import BankingSection from '../components/cards/BankingSection';
+import CreditCardsSection from '../components/cards/CreditCardsSection';
+import InvestmentsSection from '../components/cards/InvestmentsSection';
+import QuickAccessCards from '../components/cards/QuickAccessCards';
+import MyBalancesCard from '../components/cards/MyBalancesCard';
+import NavigationCards from '../components/cards/NavigationCards';
+import FeedbackSection from '../components/cards/FeedbackSection';
 import MoneyMomentCard from '../components/cards/MoneyMomentCard';
-
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { staggerChildren: 0.1 } },
-};
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: 'easeOut' } },
-};
+import ScotiaOneAlert from '../components/cards/ScotiaOneAlert';
+import ForecastAlert from '../components/cards/ForecastAlert';
+import { useApp } from '../context/AppContext';
 
 export default function HomeScreen() {
-  const navigate = useNavigate();
-  const { balances, momentConfirmed } = useApp();
+  const [activeTab, setActiveTab] = useState('accounts');
+  const [alertDismissed, setAlertDismissed] = useState(false);
+  const [forecastDismissed, setForecastDismissed] = useState(false);
+  const { momentConfirmed } = useApp();
 
-  const now = new Date();
-  const hour = now.getHours();
-  const greeting = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
-  const dateStr = now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+  const notifCount = ((!momentConfirmed && !alertDismissed) ? 1 : 0) + (!forecastDismissed ? 1 : 0);
 
   return (
-    <motion.div
-      className="px-4 py-5"
-      variants={containerVariants}
-      initial="hidden"
-      animate="visible"
-    >
-      {/* Greeting */}
-      <motion.div variants={itemVariants}>
-        <p className="text-[18px] font-medium text-scotia-grey-700">
-          {greeting}, {USER.firstName}
-        </p>
-        <p className="text-[13px] text-scotia-grey-400 mt-0.5">{dateStr}</p>
-      </motion.div>
+    <div className="bg-scotia-grey-50">
+      {/* Accounts/Updates Tab Card - overlaps header */}
+      <div className="bg-white rounded-t-3xl mx-4 mt-4 relative z-10 shadow-sm">
+        <div className="flex border-b border-scotia-grey-200">
+          <button
+            onClick={() => setActiveTab('accounts')}
+            className={`flex-1 py-4 text-[15px] font-semibold transition-colors relative cursor-pointer bg-transparent border-none ${
+              activeTab === 'accounts' ? 'text-scotia-red' : 'text-scotia-grey-500'
+            }`}
+          >
+            My accounts
+            {activeTab === 'accounts' && (
+              <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-scotia-red rounded-full" />
+            )}
+          </button>
+          <button
+            onClick={() => setActiveTab('updates')}
+            className={`flex-1 py-4 text-[15px] font-semibold transition-colors relative cursor-pointer bg-transparent border-none ${
+              activeTab === 'updates' ? 'text-scotia-red' : 'text-scotia-grey-500'
+            }`}
+          >
+            My updates
+            {notifCount > 0 && (
+              <span className="ml-2 inline-flex items-center justify-center w-6 h-6 text-[11px] font-bold text-scotia-red border-2 border-scotia-red rounded-md">
+                {notifCount}
+              </span>
+            )}
+            {activeTab === 'updates' && (
+              <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-scotia-red rounded-full" />
+            )}
+          </button>
+        </div>
 
-      {/* Net Worth Banner */}
-      <motion.div variants={itemVariants} className="mt-5">
-        <NetWorthBanner />
-      </motion.div>
-
-      {/* Balance Cards */}
-      <motion.div variants={itemVariants} className="flex gap-3 mt-4">
-        <BalanceCard
-          label="Chequing"
-          value={balances.chequing}
-          subline="Everyday account"
-          accentColor="#EC111A"
-          delay={0.2}
-        />
-        <BalanceCard
-          label="TFSA"
-          value={balances.tfsa}
-          subline="Smart Investor"
-          accentColor="#2E7D32"
-          delay={0.3}
-          navigateTo="/portfolio"
-        />
-      </motion.div>
-
-      {/* AI Insights Section Header */}
-      <motion.div variants={itemVariants} className="flex items-center justify-between mt-6 mb-3">
-        <h2 className="text-[16px] font-semibold text-scotia-grey-900">AI Insights</h2>
-        {!momentConfirmed && (
-          <span className="bg-scotia-red text-white text-[11px] font-semibold px-2.5 py-0.5 rounded-full">
-            1 new
-          </span>
+        {activeTab === 'accounts' ? (
+          <div className="p-4 space-y-4">
+            <BankingSection />
+            <CreditCardsSection />
+            <InvestmentsSection />
+          </div>
+        ) : (
+          <div className="py-3 space-y-0">
+            {!momentConfirmed && !alertDismissed && (
+              <ScotiaOneAlert onDismiss={() => setAlertDismissed(true)} />
+            )}
+            {!forecastDismissed && (
+              <ForecastAlert onDismiss={() => setForecastDismissed(true)} />
+            )}
+            {(momentConfirmed || alertDismissed) && forecastDismissed && (
+              <p className="text-[14px] text-scotia-grey-500 text-center py-4">No new updates</p>
+            )}
+          </div>
         )}
-      </motion.div>
+      </div>
 
-      {/* Money Moment Card */}
-      <motion.div variants={itemVariants}>
-        <MoneyMomentCard />
-      </motion.div>
+      {/* Feed Cards */}
+      <motion.div
+        className="px-4 space-y-4 mt-4 pb-4"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1 }}
+      >
+        <QuickAccessCards />
 
-      {/* Quick Actions */}
-      <motion.div variants={itemVariants} className="flex gap-2 mt-4">
-        <button className="flex items-center gap-1.5 bg-white border border-scotia-grey-200 rounded-full px-4 py-2 text-[13px] font-medium text-scotia-grey-700 cursor-pointer">
-          <CreditCard size={16} /> Pay Bills
-        </button>
-        <button className="flex items-center gap-1.5 bg-white border border-scotia-grey-200 rounded-full px-4 py-2 text-[13px] font-medium text-scotia-grey-700 cursor-pointer">
-          <ArrowUpRight size={16} /> Transfer
-        </button>
-        <button
-          onClick={() => navigate('/portfolio')}
-          className="flex items-center gap-1.5 bg-white border border-scotia-grey-200 rounded-full px-4 py-2 text-[13px] font-medium text-scotia-grey-700 cursor-pointer"
-        >
-          <BarChart3 size={16} /> Portfolio
-        </button>
+        <MyBalancesCard />
+        <NavigationCards />
+        <FeedbackSection />
       </motion.div>
-    </motion.div>
+    </div>
   );
 }

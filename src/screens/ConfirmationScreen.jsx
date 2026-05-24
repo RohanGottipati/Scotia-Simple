@@ -2,17 +2,21 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
-import ConfirmationAnimation from '../components/ui/ConfirmationAnimation';
-import Button from '../components/ui/Button';
 import { useCountUp } from '../hooks/useBalances';
+import { TrendingUp } from 'lucide-react';
+
+const CONFETTI_COLORS = ['#E31837', '#E31837', '#FFFFFF', '#4CAF50'];
+const CONFETTI_COUNT = 25;
 
 function Confetti() {
-  const particles = Array.from({ length: 20 }, (_, i) => ({
-    id: i,
-    left: `${Math.random() * 100}%`,
-    delay: `${Math.random() * 0.5}s`,
-    color: i % 2 === 0 ? '#EC111A' : '#FFFFFF',
-  }));
+  const [particles] = useState(() =>
+    Array.from({ length: CONFETTI_COUNT }, (_, i) => ({
+      id: i,
+      left: `${Math.random() * 100}%`,
+      delay: `${Math.random() * 0.6}s`,
+      color: CONFETTI_COLORS[i % CONFETTI_COLORS.length],
+    }))
+  );
 
   return (
     <>
@@ -21,9 +25,7 @@ function Confetti() {
           key={p.id}
           className="confetti-particle"
           style={{
-            left: p.left,
-            top: 0,
-            animationDelay: p.delay,
+            left: p.left, top: 0, animationDelay: p.delay,
             backgroundColor: p.color,
             border: p.color === '#FFFFFF' ? '1px solid #E0E0E0' : 'none',
           }}
@@ -34,21 +36,18 @@ function Confetti() {
 }
 
 function BalanceRow({ label, oldValue, newValue, delay }) {
-  const display = useCountUp(newValue, 600);
+  const display = useCountUp(newValue, 500);
   return (
     <motion.div
-      initial={{ opacity: 0, y: 10 }}
+      initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay, duration: 0.4 }}
-      className="flex items-center justify-between py-2"
+      transition={{ delay, duration: 0.3 }}
+      className="flex items-center justify-between py-2.5 px-4 bg-scotia-grey-50 rounded-xl"
     >
-      <span className="text-[14px] text-scotia-grey-700 font-medium">{label}</span>
+      <span className="text-[13px] text-scotia-grey-600 font-medium">{label}</span>
       <div className="flex items-center gap-2">
-        <span className="text-[14px] text-scotia-grey-400 line-through">
-          ${oldValue.toLocaleString('en-US', { minimumFractionDigits: 2 })}
-        </span>
-        <span className="text-[14px] text-scotia-grey-400">→</span>
-        <span className="text-[14px] text-scotia-green font-semibold">
+        <span className="text-[12px] text-scotia-grey-400 line-through">${oldValue.toFixed(2)}</span>
+        <span className="text-[13px] text-scotia-green font-semibold">
           ${display.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
         </span>
       </div>
@@ -56,87 +55,70 @@ function BalanceRow({ label, oldValue, newValue, delay }) {
   );
 }
 
+function CheckmarkAnimation() {
+  return (
+    <svg width="100" height="100" viewBox="0 0 100 100" fill="none">
+      <circle cx="50" cy="50" r="45" stroke="#4CAF50" strokeWidth="3" fill="#E8F5E9" className="check-circle" />
+      <path d="M30 52 L43 65 L70 38" stroke="#4CAF50" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" fill="none" className="checkmark-path" />
+    </svg>
+  );
+}
+
 export default function ConfirmationScreen() {
   const navigate = useNavigate();
-  const { balances } = useApp();
+  const { balances, lastConfirmedAmount } = useApp();
+  const oldChequing = balances.chequing + lastConfirmedAmount;
+  const oldTfsa = balances.tfsa - lastConfirmedAmount;
   const [phase, setPhase] = useState(1);
   const [showConfetti, setShowConfetti] = useState(false);
 
   useEffect(() => {
-    const t1 = setTimeout(() => setShowConfetti(true), 800);
-    const t2 = setTimeout(() => setPhase(2), 1500);
-    const t3 = setTimeout(() => setPhase(3), 3000);
+    const t1 = setTimeout(() => setShowConfetti(true), 600);
+    const t2 = setTimeout(() => setPhase(2), 1400);
+    const t3 = setTimeout(() => setPhase(3), 2800);
     return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
   }, []);
 
   return (
-    <div className="min-h-screen bg-white flex flex-col items-center justify-center px-6 relative overflow-hidden">
+    <div className="min-h-full bg-white flex flex-col items-center justify-center px-6 relative overflow-hidden">
       {showConfetti && <Confetti />}
 
-      {/* Phase 1 — Animation */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        className="flex flex-col items-center"
-      >
-        <ConfirmationAnimation />
-
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.8 }}
-          className="text-center mt-6"
-        >
-          <p className="display-number text-[32px] text-scotia-grey-900">$25 Invested</p>
-          <p className="text-[16px] text-scotia-grey-700 mt-1">in your TFSA</p>
+      <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.4 }} className="flex flex-col items-center">
+        <CheckmarkAnimation />
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }} className="text-center mt-5">
+          <p className="text-[28px] font-bold text-scotia-grey-900">${lastConfirmedAmount} Invested</p>
+          <p className="text-[14px] text-scotia-grey-500 mt-1">in your TFSA</p>
         </motion.div>
       </motion.div>
 
-      {/* Phase 2 — Balance Updates */}
       <AnimatePresence>
         {phase >= 2 && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="w-full mt-8 border-t border-scotia-grey-100 pt-4"
-          >
-            <BalanceRow label="Chequing" oldValue={1240} newValue={balances.chequing} delay={0} />
-            <BalanceRow label="TFSA" oldValue={3000} newValue={balances.tfsa} delay={0.2} />
-
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6, duration: 0.4 }}
-              className="mt-4 text-center"
-            >
-              <p className="text-[14px] font-medium text-scotia-grey-900">
-                Total Net Worth: ${balances.netWorth.toLocaleString('en-US', { minimumFractionDigits: 2 })}
-              </p>
-              <p className="text-[12px] text-scotia-grey-400 italic mt-1">
-                Your total wealth didn't change — it just went to work.
-              </p>
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="w-full mt-6 space-y-2">
+            <BalanceRow label="Chequing" oldValue={oldChequing} newValue={balances.chequing} delay={0} />
+            <BalanceRow label="TFSA" oldValue={oldTfsa} newValue={balances.tfsa} delay={0.15} />
+            <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4, duration: 0.3 }} className="text-center pt-3">
+              <div className="flex items-center justify-center gap-1.5 text-scotia-grey-500">
+                <TrendingUp size={14} />
+                <p className="text-[13px] font-medium">Net Worth: ${balances.netWorth.toFixed(2)}</p>
+              </div>
+              <p className="text-[11px] text-scotia-grey-400 italic mt-1">Total wealth unchanged — just working smarter.</p>
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Phase 3 — Navigation */}
       <AnimatePresence>
         {phase >= 3 && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="w-full mt-8"
-          >
-            <Button fullWidth onClick={() => navigate('/')}>
+          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }} className="w-full mt-6 space-y-3">
+            <button onClick={() => navigate('/smart-trading')} className="w-full bg-scotia-red hover:bg-scotia-red-dark text-white font-semibold text-[15px] py-3.5 rounded-full transition-all cursor-pointer border-none shadow-lg shadow-scotia-red/20">
+              Invest in a stock →
+            </button>
+            <button onClick={() => navigate('/')} className="w-full bg-white border-2 border-scotia-grey-200 text-scotia-grey-900 font-semibold text-[15px] py-3.5 rounded-full transition-all cursor-pointer hover:bg-scotia-grey-50">
               Back to Home
-            </Button>
-            <p
-              className="text-center mt-3 text-[14px] text-scotia-red font-medium cursor-pointer"
-              onClick={() => navigate('/history')}
-            >
-              View Moments History →
-            </p>
+            </button>
+            <button onClick={() => navigate('/history')} className="w-full text-[13px] text-scotia-red font-medium bg-transparent border-none cursor-pointer py-2">
+              View Moments History
+            </button>
           </motion.div>
         )}
       </AnimatePresence>
