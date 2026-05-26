@@ -43,3 +43,7 @@ npm run preview
 3. Confirm the $25 investment
 4. Watch balances update in real time
 5. Explore History and Risk Profile screens
+
+# Disclaimer
+
+This was built purely as a demo for [case]Hacks 2026 and is not a real product and should not be considered as one.
