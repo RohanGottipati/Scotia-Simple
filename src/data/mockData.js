@@ -16,7 +16,6 @@ export const CREDIT_CARDS = [
   { name: 'Scotia Momentum No-Fee VISA', last4: '5012', balance: 717.45 },
 ];
 
-export const TOTAL_HAVE = 12807.44;
 export const TOTAL_OWE = 717.45;
 
 // Money Moments feature data (kept from original)

@@ -48,8 +48,6 @@ function AppContent() {
     <AppShell>
       <Routes>
         <Route path="/" element={<HomeScreen />} />
-        <Route path="/moment" element={<MomentDetailScreen />} />
-        <Route path="/confirm" element={<ConfirmationScreen />} />
         <Route path="/advice" element={<AdviceScreen />} />
         <Route path="/portfolio" element={<PortfolioScreen />} />
         <Route path="/history" element={<HistoryScreen />} />
