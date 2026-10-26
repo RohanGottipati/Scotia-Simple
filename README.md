@@ -18,7 +18,7 @@ Built as a demo for [case]Hacks 2026. All data is mocked on the client. There is
 - **Portfolio** (`/portfolio`): TFSA growth chart and holdings. No in-app link points here, so open it by URL.
 - **Lock-screen notification demo** (`/notification` → `/splash`): a simulated phone notification that opens the app through a splash screen into the Money Moment or TFSA flow.
 
-The app renders inside a phone frame (430×920) on desktop.
+The app always renders inside a fixed 430×920 phone frame, whatever the browser size.
 
 ## Tech stack
 
